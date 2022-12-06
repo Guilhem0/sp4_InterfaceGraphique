@@ -17,13 +17,18 @@ public class FenetreDeJeu extends javax.swing.JFrame {
         initComponents();
         panneau_info_joueur.setVisible(false);
         panneau_info_partie.setVisible(false);
-        for(int i=5; i>=0; i--){
-            for(int j=0; j<7; j++){
-                CelluleGraphique cellGraph = new CelluleGraphique();
-                        panneau_grille.add(cellGraph);
+        for (int i = 5; i >= 0; i--) {
+            for (int j = 0; j < 7; j++) {
+                CelluleGraphique cellGraph = new CelluleGraphique(plateau.grille[i][j]);
+                panneau_grille.add(cellGraph);
             }
         }
     }
+
+    private Joueur[] listeJoueurs = new Joueur[2];
+    private Joueur joueurCourant;
+    private Joueur joueurSuivant;
+    private PlateauDeJeu plateau = new PlateauDeJeu();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -51,7 +56,7 @@ public class FenetreDeJeu extends javax.swing.JFrame {
         lbl_j2_couleur = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        lbl_j2_nom1 = new javax.swing.JLabel();
+        lbl_j2_nom = new javax.swing.JLabel();
         panneau_creation_partie = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -123,8 +128,8 @@ public class FenetreDeJeu extends javax.swing.JFrame {
         jLabel11.setText("Joueur2 :");
         panneau_info_joueur.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
 
-        lbl_j2_nom1.setText("nomjoueur2");
-        panneau_info_joueur.add(lbl_j2_nom1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 180, -1, -1));
+        lbl_j2_nom.setText("nomjoueur2");
+        panneau_info_joueur.add(lbl_j2_nom, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 180, -1, -1));
 
         getContentPane().add(panneau_info_joueur, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 140, 290, 280));
 
@@ -217,43 +222,70 @@ public class FenetreDeJeu extends javax.swing.JFrame {
         getContentPane().add(btn_col_4, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, -1, -1));
 
         btn_col_5.setText("6");
+        btn_col_5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_col_5ActionPerformed(evt);
+            }
+        });
         getContentPane().add(btn_col_5, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 20, -1, -1));
 
         btn_col_6.setText("7");
+        btn_col_6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_col_6ActionPerformed(evt);
+            }
+        });
         getContentPane().add(btn_col_6, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 20, -1, -1));
 
         setBounds(0, 0, 1044, 630);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_col_0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_col_0ActionPerformed
-        // TODO add your handling code here:
+        jouerDansColone(0);
+        joueurSuivant();
     }//GEN-LAST:event_btn_col_0ActionPerformed
 
     private void btn_col_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_col_1ActionPerformed
-        // TODO add your handling code here:
+        jouerDansColone(1);
+        joueurSuivant();
     }//GEN-LAST:event_btn_col_1ActionPerformed
 
     private void btn_col_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_col_3ActionPerformed
-        // TODO add your handling code here:
+        jouerDansColone(3);
+        joueurSuivant();
     }//GEN-LAST:event_btn_col_3ActionPerformed
 
     private void btn_col_4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_col_4ActionPerformed
-        // TODO add your handling code here:
+        jouerDansColone(4);
+        joueurSuivant();
     }//GEN-LAST:event_btn_col_4ActionPerformed
 
     private void btn_col_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_col_2ActionPerformed
-        // TODO add your handling code here:
+        jouerDansColone(2);
+        joueurSuivant();
     }//GEN-LAST:event_btn_col_2ActionPerformed
 
     private void btn_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_startActionPerformed
         panneau_info_joueur.setVisible(true);
         panneau_info_partie.setVisible(true);
         initialiserPartie();
+        panneau_grille.repaint();
+        btn_start.setEnabled(false);
     }//GEN-LAST:event_btn_startActionPerformed
 
     private void nom_joueur1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nom_joueur1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_nom_joueur1ActionPerformed
+
+    private void btn_col_5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_col_5ActionPerformed
+        jouerDansColone(5);
+        joueurSuivant();
+    }//GEN-LAST:event_btn_col_5ActionPerformed
+
+    private void btn_col_6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_col_6ActionPerformed
+        jouerDansColone(6);
+        joueurSuivant();
+    }//GEN-LAST:event_btn_col_6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -289,21 +321,40 @@ public class FenetreDeJeu extends javax.swing.JFrame {
             }
         });
     }
-    
-    private Joueur[] listeJoueurs = new Joueur[2];
-    private Joueur joueurCourant;
-    private Joueur joueurSuivant;
-    private PlateauDeJeu plateau;
-    
+
     public void attribuerCouleurAuxJoueurs() {
         double alea = Math.random(); //on genere un double aleatoire entre 0 et 1   
         if (alea < 0.5) {       //une chance sur 2 d'etre inferieur a 0,5
             listeJoueurs[0].affecterCouleur("rouge");
             listeJoueurs[1].affecterCouleur("jaune");
+            joueurCourant = listeJoueurs[0];
         } else {
             listeJoueurs[0].affecterCouleur("jaune");
             listeJoueurs[1].affecterCouleur("rouge");
+            joueurCourant = listeJoueurs[1];
 
+        }
+    }
+
+    public void joueurSuivant() {
+        if (joueurCourant == listeJoueurs[0]) {
+            joueurCourant = listeJoueurs[1];
+        } else {
+            joueurCourant = listeJoueurs[0];
+        }
+        lbl_jcourant.setText(joueurCourant.nom);
+    }
+
+    public boolean jouerDansColone(int colonneJouee) {
+        int resultatAction;
+        resultatAction = plateau.ajouterJetonDansColonne(joueurCourant.getReserveJetons().get(0), colonneJouee - 1);
+        panneau_grille.repaint();
+        if (resultatAction == 0 || resultatAction == 1 || resultatAction == 2 || resultatAction == 3 || resultatAction == 4 || resultatAction == 5) {
+            return true;
+        } else {
+            return false;
+            
+            
         }
     }
 
@@ -362,17 +413,24 @@ public class FenetreDeJeu extends javax.swing.JFrame {
 
     public void initialiserPartie() {
         String nomJoueur1 = nom_joueur1.getText();
-        String nomJoueur2 = nom_joueur1.getText();
-        attribuerCouleurAuxJoueurs();
-        creerEtAffecterJeton(listeJoueurs[0]);
-        creerEtAffecterJeton(listeJoueurs[1]);
+        String nomJoueur2 = nom_joueur2.getText();
         placerTrousNoirsEtDesintegrateurs();
         Joueur J1 = new Joueur(nomJoueur1);
         listeJoueurs[0] = J1;
         Joueur J2 = new Joueur(nomJoueur2);
-        listeJoueurs[0] = J2;
+        listeJoueurs[1] = J2;
+        creerEtAffecterJeton(listeJoueurs[0]);
+        creerEtAffecterJeton(listeJoueurs[1]);
+        attribuerCouleurAuxJoueurs();
+        lbl_j1_nom.setText(nomJoueur1);
+        lbl_j2_nom.setText(nomJoueur2);
+        lbl_j1_couleur.setText(J1.couleur);
+        lbl_j2_couleur.setText(J2.couleur);
+        lbl_j1_desint.setText(J1.nombreDesintegrateurs + "");
+        lbl_j2_desint.setText(J2.nombreDesintegrateurs + "");
+        lbl_jcourant.setText(joueurCourant.nom);
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_col_0;
     private javax.swing.JButton btn_col_1;
@@ -402,7 +460,7 @@ public class FenetreDeJeu extends javax.swing.JFrame {
     private javax.swing.JLabel lbl_j1_nom;
     private javax.swing.JLabel lbl_j2_couleur;
     private javax.swing.JLabel lbl_j2_desint;
-    private javax.swing.JLabel lbl_j2_nom1;
+    private javax.swing.JLabel lbl_j2_nom;
     private javax.swing.JLabel lbl_jcourant;
     private javax.swing.JScrollPane message;
     private javax.swing.JTextField nom_joueur1;
